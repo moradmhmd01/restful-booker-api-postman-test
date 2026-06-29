@@ -1,0 +1,125 @@
+{
+  "info": {
+    "_postman_id": "0c0ed6a1-3054-488c-9817-00f310263392",
+    "name": "Restful-Booker API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50110630",
+    "_collection_link": "https://go.postman.co/collection/50110630-0c0ed6a1-3054-488c-9817-00f310263392?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth - Generate Token",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 Created\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.environment.set(\"bookingId\", jsonData.bookingid);\r",
+              "\r",
+              "pm.test(\"Verify booking details match request payload\", function () {\r",
+              "    pm.expect(jsonData.booking.firstname).to.eql(\"Johnny\");\r",
+              "    pm.expect(jsonData.booking.totalprice).to.eql(150);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\"firstname\" : \"Johnny\",\r\n\"lastname\" : \"Bravo\",\r\n\"totalprice\" : 150,\r\n\"depositpaid\" : true,\r\n\"bookingdates\" : { \"checkin\" : \"2026-07-01\", \"checkout\" : \"2026-07-10\" }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/booking",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "booking"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Booking Details",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "var jsonData = pm.response.json();\r",
+              "pm.test(\"Ensure correct record was fetched dynamically\", function () {\r",
+              "    pm.expect(jsonData.lastname).to.eql(\"Bravo\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/booking/{{bookingId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "booking",
+            "{{bookingId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
